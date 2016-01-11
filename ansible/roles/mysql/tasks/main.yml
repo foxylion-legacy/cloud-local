@@ -1,0 +1,28 @@
+---
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /cloud/mysql/data
+  - /cloud/mysql/config
+
+- name: Add docker container
+  docker:
+    name: lc-mysql
+    image: "mysql:{{ mysql_version }}"
+    net: "{{ docker_network }}"
+    state: reloaded
+    ports:
+    - 127.0.0.1:3306:3306
+    volumes:
+    - /cloud/mysql/data:/var/lib/mysql
+    - /cloud/mysql/config:/etc/mysql/conf.d
+    env:
+      MYSQL_ROOT_PASSWORD: cloud
+
+- name: Add docker autostart
+  docker_autostart:
+    name: lc-mysql
+    state: present

@@ -1,0 +1,33 @@
+---
+
+- name: Install bridge-utils via apt
+  apt:
+    name: bridge-utils
+    state: latest
+
+- name: Add apt repository key
+  apt_key:
+    url: https://apt.dockerproject.org/gpg
+    id: 2C52609D
+    state: present
+
+- name: Add apt repository
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
+    state: present
+
+- name: Install docker-engine via apt
+  apt:
+    name: "docker-engine={{ docker_engine_version }}"
+    state: present
+
+- name: Install docker-py via pip
+  pip:
+    name: docker-py
+    version: "{{ docker_py_version }}"
+    state: present
+
+- name: Create docker network for cloud
+  docker_network:
+    name: "{{ docker_network }}"
+    state: present

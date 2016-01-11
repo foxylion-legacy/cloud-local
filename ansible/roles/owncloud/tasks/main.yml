@@ -1,0 +1,33 @@
+---
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /cloud/owncloud/data
+  - /cloud/owncloud/config
+  - /cloud/owncloud/apps
+
+- name: Copy default config
+  copy:
+    src: autoconfig.php
+    dest: /cloud/owncloud/config/autoconfig.php
+
+- name: Add docker container
+  docker:
+    name: lc-owncloud
+    image: "owncloud:{{ owncloud_version }}-apache"
+    net: "{{ docker_network }}"
+    state: reloaded
+    ports:
+    - 8080:80
+    volumes:
+    - /cloud/owncloud/data:/var/www/html/data
+    - /cloud/owncloud/config:/var/www/html/config
+    - /cloud/owncloud/apps:/var/www/html/apps
+
+- name: Add docker autostart
+  docker_autostart:
+    name: lc-owncloud
+    state: present

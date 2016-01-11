@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+from ansible.module_utils.basic import *
+
+def create_file(filename, name, timeout):
+  file = open(filename, "w")
+  file.write("""
+[Unit]
+Description=Docker container %s
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a %s
+ExecStop=/usr/bin/docker stop -t %s %s
+
+[Install]
+WantedBy=multi-user.target
+""" % (name, name, timeout, name))
+  file.close()
+
+module = AnsibleModule(
+  argument_spec = dict(
+    name      = dict(required = True),
+    timeout   = dict(default = 10),
+    state     = dict(default = 'present', choices = ['present', 'absent'])
+  )
+)
+
+name = module.params['name']
+filename = "/etc/systemd/system/docker-" + name + ".service"
+state = module.params['state']
+timeout = module.params['timeout']
+
+if state == 'present':
+  if not os.path.isfile(filename):
+    create_file(filename, name, timeout)
+    subprocess.call("systemctl enable docker-" + name, shell=True)
+    module.exit_json(changed = True)
+  else:
+    module.exit_json(changed = False)
+
+else:
+  if os.path.isfile(filename):
+    subprocess.call("systemctl disable docker-" + name, shell=True)
+    os.remove(filename)
+    module.exit_json(changed = True)
+  else:
+    module.exit_json(changed = False)

@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+from ansible.module_utils.basic import *
+from docker import Client
+
+module = AnsibleModule(
+  argument_spec = dict(
+    name      = dict(required = True),
+    state     = dict(default = 'present', choices = ['present', 'absent'])
+  )
+)
+
+name = module.params['name']
+state = module.params['state']
+
+c = Client()
+
+if state == 'present':
+  if not c.networks(names=[name]):
+    c.create_network(name, driver="bridge")
+    module.exit_json(changed = True)
+  else:
+    module.exit_json(changed = False)
+else:
+  if c.networks(names=[name]):
+    c.remove_network(name)
+    module.exit_json(changed = True)
+  else:
+    module.exit_json(changed = False)

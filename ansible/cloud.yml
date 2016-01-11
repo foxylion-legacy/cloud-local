@@ -1,0 +1,8 @@
+---
+
+- hosts: cloud
+  roles:
+  - apt
+  - docker
+  - mysql
+  - owncloud

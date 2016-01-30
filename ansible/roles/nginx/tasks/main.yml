@@ -1,0 +1,39 @@
+---
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /cloud/nginx/config
+  - /cloud/nginx/www
+
+- name: Copy default config
+  template:
+    src: nginx.conf
+    dest: /cloud/nginx/config/nginx.conf
+  notify: Restart docker container
+
+- name: Copy www pages
+  copy:
+    src: www/
+    dest: /cloud/nginx/www
+
+- name: Add docker container
+  docker:
+    name: lc-nginx
+    image: "nginx:{{ nginx_version }}"
+    net: "{{ docker_network }}"
+    state: started
+    ports:
+    - "80:80"
+    - "443:443"
+    volumes:
+    - /cloud/nginx/config:/etc/nginx:ro
+    - /cloud/nginx/www:/cloud/nginx/www:ro
+    - /cloud/letsencrypt/config:/cloud/letsencrypt/config:ro
+
+- name: Add docker autostart
+  docker_autostart:
+    name: lc-nginx
+    state: present

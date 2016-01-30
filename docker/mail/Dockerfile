@@ -12,8 +12,7 @@ RUN apt-get update && apt-get install -y supervisor
 
 COPY ./services /services
 RUN chmod -R +x ./services/*.sh
-COPY supervisor.conf /supervisor.conf
-RUN mkdir /var/log/supervisord
+COPY ./config/supervisor.conf /supervisor.conf
 
 # SMTP & Secure SMTP
 EXPOSE 25  587

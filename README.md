@@ -11,6 +11,11 @@ To try it on a local machine you need VirtualBox and Vagrant.
 ```bash
 vagrant up
 vagrant ssh dev
+```
+
+Now copy the file `ansible/group_vars/ansible-vars.yml.sample` to `vagrant-data/ansible-vars.yml` and fill in the values. Afterwards you can run the playbook.
+
+```bash
 ansible-playbook ansible/cloud.yml
 ```
 

@@ -1,0 +1,6 @@
+---
+
+admin_mail: me@example.domain
+public_domains:
+- home1.example.domain
+- home2.example.domain

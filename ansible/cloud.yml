@@ -1,8 +1,12 @@
 ---
 
 - hosts: cloud
+  vars_files:
+  - ../vagrant-data/ansible-vars.yml
   roles:
   - apt
   - docker
   - mysql
   - owncloud
+  - letsencrypt
+  - nginx

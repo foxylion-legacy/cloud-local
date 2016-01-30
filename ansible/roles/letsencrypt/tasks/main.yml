@@ -1,0 +1,31 @@
+---
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /cloud/letsencrypt/data
+  - /cloud/letsencrypt/config
+  - /cloud/letsencrypt/config/current
+  - /cloud/letsencrypt/www/.well-known/acme-challenge
+
+- name: Check certificates exists
+  stat:
+    path: /cloud/letsencrypt/config/current/fullchain.pem
+  register: certs_result
+
+- name: Create self-signed certificates
+  command: "openssl req -x509 -nodes -newkey rsa:4096 -subj /CN={{ public_domains|join('/CN=') }} -days 10000 -keyout /cloud/letsencrypt/config/current/privkey.pem -out /cloud/letsencrypt/config/current/fullchain.pem"
+  when: not certs_result.stat.exists
+
+- name: Copy default config
+  template:
+    src: cli.ini
+    dest: /cloud/letsencrypt/config/cli.ini
+
+- name: Copy executable bash file
+  template:
+    src: letsencrypt.sh
+    dest: /usr/local/sbin/letsencrypt
+    mode: "0700"

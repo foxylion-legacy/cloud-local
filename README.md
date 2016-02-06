@@ -1,6 +1,8 @@
-# local.cloud
+# cloud.local
 
-![local.cloud](https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Cartoon_cloud.svg/320px-Cartoon_cloud.svg.png)
+## >>> This repository is no longer maintained! <<<
+
+![cloud.local](https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Cartoon_cloud.svg/320px-Cartoon_cloud.svg.png)
 
 Your personal cloud on a local machine, will later include cloud storage, mail server, calendar, contacts, and many more. All from your local internet connection.
 
